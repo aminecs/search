@@ -24,4 +24,3 @@ def get_embeddings_for_docs(model, docs):
 
     logging.info("EMBEDDINGS FOR " + str(len(docs)) + " DOCS WAS CALCULATED")
     return embeddings
-

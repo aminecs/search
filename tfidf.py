@@ -6,7 +6,7 @@ def get_tf(doc) -> dict:
     logging.info("CALCULATING TF FOR DOC: " + str(doc["id"]))
                      
     txt = doc["text"]
-    tf = collections.defaultdict(int)
+    tf : dict = collections.defaultdict(int)
     for word in txt:
         tf[word] += 1
 
@@ -18,8 +18,8 @@ def get_tf(doc) -> dict:
 def get_idf(docs : list) -> dict:
     logging.info("CALCULATING IDF FOR " + str(len(docs)) + " DOCS")
 
-    doc_length = len(doc)
-    idf = collections.defaultdict(int)
+    doc_length = len(docs)
+    idf : dict = collections.defaultdict(int)
     for doc in docs:
         txt = doc["text"]
         for word in set(txt):
