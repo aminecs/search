@@ -1,7 +1,7 @@
 import collections, math
 import logging
 
-# Use TypedDict for type hinting of doc
+# TODO: Use TypedDict for type hinting of doc
 def get_tf(doc) -> dict:
     logging.info("CALCULATING TF FOR DOC: " + str(doc["id"])
                  
