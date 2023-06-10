@@ -3,8 +3,8 @@ import logging
 
 # TODO: Use TypedDict for type hinting of doc
 def get_tf(doc) -> dict:
-    logging.info("CALCULATING TF FOR DOC: " + str(doc["id"])
-                 
+    logging.info("CALCULATING TF FOR DOC: " + str(doc["id"]))
+                     
     txt = doc["text"]
     tf = collections.defaultdict(int)
     for word in txt:
