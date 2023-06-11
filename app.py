@@ -79,7 +79,7 @@ def get_filtered_relevant_docs(docs, query):
     
     cosine_similarity_scores.sort(reverse=True)
     logging.info("END - FILTERED RELEVANT DOCS")
-    return cosine_similarity_scores
+    return cosine_similarity_scores[:3]
 
 def get_docs_data(docs_scored):
     logging.info("START - DOCS DATA")
@@ -106,9 +106,11 @@ def get_llm_answer(docs_scored, query):
     logging.info(f"START - LLM ANSWER - Number of docs considered: {len(docs_scored)}")
 
     prompt = f"""
-    Based on the following list of json documents: {docs_scored},
-    Answer the following question: {{ {query} }}
-    You have to answer the question, and return both the id and url of the text that has the answer.
+    Your only knowledge: {docs_scored},
+    Question: {{ {query} }}
+
+    Answer the question only if the answer is in the knowledge available; otherwise tell me you don't know it.
+    Cite the id and the url.
     """
 
     payload = prompt
