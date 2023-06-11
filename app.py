@@ -5,13 +5,14 @@ import os
 import collections, ast, re
 from sklearn.metrics.pairwise import cosine_similarity
 import embeddings
-import openai
 import numpy as np
 import anthropic
+import flask, json
+import logging
 
 #nltk.download('all-nltk')
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"/home/fromamine/.config/gcloud/application_default_credentials.json"
-
+app = flask.Flask(__name__)
 client = bigquery.Client()
 
 def get_query_preprocessed(query):
@@ -120,18 +121,24 @@ def get_llm_answer(docs_scored, query):
     max_tokens_to_sample=100,
     )
     return response["completion"]
-    
 
-
-
-def get_results(query):
+@app.route("/query", methods = ["POST"])
+def get_results():
+    logging.info("REQUEST RECEIVED")
+    content = flask.request.get_json(silent=True)
+    query = content["query"]
     query_preprocessed = get_query_preprocessed(query)
     pre_filtered_docs = get_similar_docs(query_preprocessed)
     relevant_docs_embeddings = get_relevant_docs_embeddings(pre_filtered_docs)
     relevant_docs_scored = get_filtered_relevant_docs(relevant_docs_embeddings, query_preprocessed)
     docs_data_dict_list = get_docs_data(relevant_docs_scored)
     answer = get_llm_answer(docs_data_dict_list, query)
-    print(answer)
+    
+    load = dict()
+    load["answer"] = answer
+    json_data = json.dumps(load)
 
+    return json_data
 
-get_results("In which book of the bible can we find Abel?")
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
