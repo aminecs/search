@@ -31,13 +31,13 @@ def get_tfidf_scores():
     df = pd.DataFrame(embeddings_generated, columns=['id','embedding'])
     logging.info("DF READY")
 
-    # logging.info("INIT CLOUD STORAGE")
-    # client_storage = storage.Client()
-    # bucket = client_storage.get_bucket("fromamine-search-bucket")
-    # logging.info("CLOUD STORAGE BUCKET OBTAINED")
+    logging.info("INIT CLOUD STORAGE")
+    client_storage = storage.Client()
+    bucket = client_storage.get_bucket("fromamine-search-bucket")
+    logging.info("CLOUD STORAGE BUCKET OBTAINED")
 
-    # bucket.blob("datasets/embeddings_wiki_10000.csv").upload_from_string(df.to_csv(), "text/csv")
-    # logging.info("DATA UPLOADED")
+    bucket.blob("datasets/embeddings_wiki_10000.csv").upload_from_string(df.to_csv(), "text/csv")
+    logging.info("DATA UPLOADED")
 
     
 
