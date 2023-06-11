@@ -106,10 +106,9 @@ def get_llm_answer(docs_scored, query):
     logging.info(f"START - LLM ANSWER - Number of docs considered: {len(docs_scored)}")
 
     prompt = f"""
-    Based on the following list of json documents and ONLY this list: {docs_scored},
+    Based on the following list of json documents: {docs_scored},
     Answer the following question: {{ {query} }}
-    You have to answer the question, and give the id and url of the text that has the answer.
-    You also need to output the number of documents you had access to to find the answer.
+    You have to answer the question, and return both the id and url of the text that has the answer.
     """
 
     payload = prompt
