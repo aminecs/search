@@ -8,6 +8,7 @@ import numpy as np
 import anthropic
 import flask, json
 import logging
+from flask_cors import CORS
 
 logging.basicConfig(stream=sys.stdout, format="%(asctime)s | %(levelname)s | %(message)s", level=logging.INFO)
 #nltk.download('all-nltk')
@@ -15,6 +16,7 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"/home/fromamine/.config/gcloud/
 api_key = os.environ.get('CLAUDE_API_KEY')
 anthropic_client = anthropic.Client(api_key)
 app = flask.Flask(__name__)
+CORS(app)
 client = bigquery.Client()
 
 def get_query_preprocessed(query):
