@@ -14,7 +14,8 @@ def get_tfidf_scores():
     query = """
         SELECT id, text_processed
         FROM `cobalt-deck-389420.search_wiki_10000.wiki_10000`
-        WHERE id = 694
+        ORDER BY id
+        LIMIT 500
     """
 
     logging.info("QUERY TO RETRIEVE DOCS FORMATTED")
