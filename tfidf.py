@@ -1,6 +1,8 @@
 import collections, math
 import logging
 
+DOCS_LEN = 10000
+
 # TODO: Use TypedDict for type hinting of doc
 def get_tf(doc) -> dict:
     logging.info("CALCULATING TF FOR DOC: " + str(doc["id"]))
@@ -18,14 +20,13 @@ def get_tf(doc) -> dict:
 def get_idf(docs : list) -> dict:
     logging.info("CALCULATING IDF FOR " + str(len(docs)) + " DOCS")
 
-    doc_length = len(docs)
     idf : dict = collections.defaultdict(int)
     for doc in docs:
         txt = doc["text"]
         for word in set(txt):
             idf[word] += 1
     for word in idf:
-        idf[word] = math.log(doc_length/idf[word])
+        idf[word] = math.log(DOCS_LEN/idf[word])
 
     logging.info("IDF WAS CALCULATED FOR " + str(len(docs)) + " DOCS")
     return idf
