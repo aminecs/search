@@ -28,6 +28,7 @@ def get_tfidf_scores():
     logging.info("GET TF-IDF SCORES")
     logging.info("BUILDING DF")
     df = pd.DataFrame(tf_idf_scores, columns=['word','id','score'])
+
     logging.info("DF READY")
 
     logging.info("INIT CLOUD STORAGE")

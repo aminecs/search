@@ -1,5 +1,6 @@
 import collections, math
 import logging
+import ast
 
 DOCS_LEN = 10000
 
@@ -7,7 +8,7 @@ DOCS_LEN = 10000
 def get_tf(doc) -> dict:
     logging.info("CALCULATING TF FOR DOC: " + str(doc["id"]))
                      
-    txt = doc["text_processed"]
+    txt = ast.literal_eval(doc["text_processed"])
     tf : dict = collections.defaultdict(int)
     for word in txt:
         tf[word] += 1
@@ -22,7 +23,7 @@ def get_idf(docs : list) -> dict:
 
     idf : dict = collections.defaultdict(int)
     for doc in docs:
-        txt = doc["text_processed"]
+        txt = ast.literal_eval(doc["text_processed"])
         for word in set(txt):
             idf[word] += 1
     for word in idf:
