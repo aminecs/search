@@ -2,7 +2,7 @@ from sentence_transformers import SentenceTransformer, util
 import logging
 import ast
 
-DOCS_LEN = 1000
+DOCS_LEN = 500
 
 def get_model(model_name):
     logging.info("LOADING MODEL: " + model_name)
@@ -12,7 +12,8 @@ def get_embeddings(model, doc):
     logging.info("CALCULATING EMBEDDINGS FOR DOC: " + str(doc["id"]))
 
     txt = ast.literal_eval(doc["text_processed"])
-    embedding = model.encode(txt)
+    txt_join = " ".join(txt)
+    embedding = model.encode(txt_join)
 
     logging.info("EMBEDDINGS FOR DOC: " + str(doc["id"]) + " WAS CALCULATED")
 
