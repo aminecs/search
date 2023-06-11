@@ -7,7 +7,7 @@ DOCS_LEN = 10000
 def get_tf(doc) -> dict:
     logging.info("CALCULATING TF FOR DOC: " + str(doc["id"]))
                      
-    txt = doc["text"]
+    txt = doc["text_processed"]
     tf : dict = collections.defaultdict(int)
     for word in txt:
         tf[word] += 1
@@ -18,30 +18,30 @@ def get_tf(doc) -> dict:
 
 
 def get_idf(docs : list) -> dict:
-    logging.info("CALCULATING IDF FOR " + str(len(docs)) + " DOCS")
+    logging.info("CALCULATING IDF FOR " + str(DOCS_LEN) + " DOCS")
 
     idf : dict = collections.defaultdict(int)
     for doc in docs:
-        txt = doc["text"]
+        txt = doc["text_processed"]
         for word in set(txt):
             idf[word] += 1
     for word in idf:
         idf[word] = math.log(DOCS_LEN/idf[word])
 
-    logging.info("IDF WAS CALCULATED FOR " + str(len(docs)) + " DOCS")
+    logging.info("IDF WAS CALCULATED FOR " + str(DOCS_LEN) + " DOCS")
     return idf
 
 def get_tfidf(docs : list) -> dict:
-    logging.info("CALCULATING TFIDF FOR " + str(len(docs)) + " DOCS")
+    logging.info("CALCULATING TFIDF FOR " + str(DOCS_LEN) + " DOCS")
 
-    tfidf = collections.defaultdict(list)
+    tfidf = []
     idf = get_idf(docs)
 
     for doc in docs:
         tf = get_tf(doc)
         doc_id = doc["id"]
         for word in idf:
-            tfidf[word].append((doc_id,tf[word] * idf[word]))
+            tfidf.append((word, doc_id, tf[word] * idf[word]))
 
-    logging.info("TFIDF WAS CALCULATED FOR " + str(len(docs)) + " DOCS")
+    logging.info("TFIDF WAS CALCULATED FOR " + str(DOCS_LEN) + " DOCS")
     return tfidf
