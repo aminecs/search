@@ -9,7 +9,7 @@ import anthropic
 import flask, json
 import logging
 
-logging.basicConfig(stream=sys.stdout, filename='example.log', level=logging.INFO)
+logging.basicConfig(filename='requests.log', format="%(asctime)s | %(levelname)s | %(message)s", level=logging.INFO)
 #nltk.download('all-nltk')
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"/home/fromamine/.config/gcloud/application_default_credentials.json"
 api_key = os.environ.get('CLAUDE_API_KEY')
