@@ -1,10 +1,9 @@
 from google.cloud import bigquery, storage
 import tfidf
-import os, sys
+import os
 import pandas as pd
 import logging
 
-logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"/home/fromamine/.config/gcloud/application_default_credentials.json"
 
 def get_tfidf_scores():

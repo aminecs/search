@@ -1,8 +1,7 @@
 from nltk.tokenize import word_tokenize
 import nltk
 from google.cloud import bigquery
-import os
-import collections, ast, re
+import os, sys
 from sklearn.metrics.pairwise import cosine_similarity
 import embeddings
 import numpy as np
@@ -10,17 +9,21 @@ import anthropic
 import flask, json
 import logging
 
+logging.basicConfig(stream=sys.stdout, filename='example.log', level=logging.INFO)
 #nltk.download('all-nltk')
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"/home/fromamine/.config/gcloud/application_default_credentials.json"
+api_key = os.environ.get('CLAUDE_API_KEY')
+anthropic_client = anthropic.Client(api_key)
 app = flask.Flask(__name__)
 client = bigquery.Client()
 
 def get_query_preprocessed(query):
+    logging.info(f"START - QUERY PREPROCESSING {query}")
     return word_tokenize(query.lower())
 
 def get_similar_docs(query_preprocessed : list) -> list:
+    logging.info("START - SIMILAR DOCS TO QUERY USING TFIDF")
     query_preproccesed_str = '"'+'","'.join(query_preprocessed)+'"'
-
 
     query = f"""
     SELECT id, sum(score) as total_score 
@@ -32,10 +35,11 @@ def get_similar_docs(query_preprocessed : list) -> list:
     """
         
     query_job = client.query(query)
-    
+    logging.info("END - SIMILAR DOCS TO QUERY USING TFIDF")
     return query_job
 
 def get_relevant_docs_embeddings(docs):
+    logging.info("START - RELEVANT DOCS EMBEDDINGS")
     docs_ids = []
 
     for doc in docs:
@@ -51,10 +55,11 @@ def get_relevant_docs_embeddings(docs):
     """
         
     query_job = client.query(query)
-
+    logging.info("END - RELEVANT DOCS EMBEDDINGS")
     return query_job
 
 def get_filtered_relevant_docs(docs, query):
+    logging.info("START - FILTERED RELEVANT DOCS")
     model = embeddings.get_model("multi-qa-mpnet-base-dot-v1")
 
     txt_join = " ".join(query)
@@ -73,10 +78,11 @@ def get_filtered_relevant_docs(docs, query):
             cosine_similarity_scores.append((cosine_similarity_score[0][0], doc["id"]))
     
     cosine_similarity_scores.sort(reverse=True)
+    logging.info("END - FILTERED RELEVANT DOCS")
     return cosine_similarity_scores
 
 def get_docs_data(docs_scored):
-
+    logging.info("START - DOCS DATA")
     docs_ids_str = ", ".join(str(doc_id) for _, doc_id in docs_scored)
 
     query = f"""
@@ -93,16 +99,11 @@ def get_docs_data(docs_scored):
         doc_data_dict = {"id": i, "url": row["url"], "text": row["text"]}
         docs_data_dict_list.append(doc_data_dict)
         i += 1
+    logging.info("END - DOCS DATA")
     return docs_data_dict_list
 
-def getClaudeApiKey():
-    return os.environ.get('CLAUDE_API_KEY')
-
-def getClient():
-    api_key = getClaudeApiKey()
-    return anthropic.Client(api_key)
-
 def get_llm_answer(docs_scored, query):
+    logging.info("START - LLM ANSWER")
     print("Number of docs considered: ", len(docs_scored))
 
     prompt = f"""
@@ -112,7 +113,6 @@ def get_llm_answer(docs_scored, query):
     You also need to output the number of documents you had access to to find the answer.
     """
 
-    client = getClient()
     payload = prompt
     response = client.completion(
     prompt=f"{anthropic.HUMAN_PROMPT}{payload}?{anthropic.AI_PROMPT}",
@@ -120,6 +120,8 @@ def get_llm_answer(docs_scored, query):
     model="claude-v1",
     max_tokens_to_sample=100,
     )
+
+    logging.info("END - LLM ANSWER")
     return response["completion"]
 
 @app.route("/query", methods = ["POST"])
@@ -138,6 +140,7 @@ def get_results():
     load["answer"] = answer
     json_data = json.dumps(load)
 
+    logging.info("REQUEST COMPLETED")
     return json_data
 
 if __name__ == '__main__':
