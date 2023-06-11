@@ -103,8 +103,7 @@ def get_docs_data(docs_scored):
     return docs_data_dict_list
 
 def get_llm_answer(docs_scored, query):
-    logging.info("START - LLM ANSWER")
-    print("Number of docs considered: ", len(docs_scored))
+    logging.info(f"START - LLM ANSWER - Number of docs considered: {len(docs_scored)}")
 
     prompt = f"""
     Based on the following list of json documents and ONLY this list: {docs_scored},
