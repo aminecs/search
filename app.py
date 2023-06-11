@@ -9,7 +9,7 @@ import anthropic
 import flask, json
 import logging
 
-logging.basicConfig(filename='requests.log', format="%(asctime)s | %(levelname)s | %(message)s", level=logging.INFO)
+logging.basicConfig(stream=sys.stdout, format="%(asctime)s | %(levelname)s | %(message)s", level=logging.INFO)
 #nltk.download('all-nltk')
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"/home/fromamine/.config/gcloud/application_default_credentials.json"
 api_key = os.environ.get('CLAUDE_API_KEY')
@@ -113,7 +113,7 @@ def get_llm_answer(docs_scored, query):
     """
 
     payload = prompt
-    response = client.completion(
+    response = anthropic_client.completion(
     prompt=f"{anthropic.HUMAN_PROMPT}{payload}?{anthropic.AI_PROMPT}",
     stop_sequences = [anthropic.HUMAN_PROMPT],
     model="claude-v1",
